@@ -211,7 +211,7 @@ const foodImages = [
   },
   {
     url: "https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Corndogs-7832ef6.jpg?quality=90&resize=556,505",
-    category: "Fast Food",
+    category: "Fast food",
   },
 ];
 
@@ -221,7 +221,7 @@ const FoodOptions = () => (
       <div key={index} className="flex flex-col ml-5">
         <div
           key={index}
-          className="flex-shrink-0 w-20 h-20 rounded-full overflow-hidden"
+          className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden"
         >
           <Image
             width={200}
@@ -232,7 +232,7 @@ const FoodOptions = () => (
           />
         </div>
 
-        <h1 className="text-black text-center mt-2">{food.category}</h1>
+        <h1 className="text-black text-center mt-2 font-light text-sm w-full">{food.category}</h1>
       </div>
     ))}
   </div>
