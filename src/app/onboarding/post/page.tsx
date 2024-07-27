@@ -40,12 +40,10 @@ const IntroducingEeta = () => {
           <div className="w-full bg-gray-100 p-6 rounded-lg mb-6 mt-3">
             <div className="flex items-center mb-3">
               <FaComment size={33} />
-              <p className="ml-4 mb-3">
-                Chat with Eeta in an engaging conversation
-              </p>
+              <p className="ml-4">Chat with Eeta in an engaging conversation</p>
             </div>
             <div className="flex items-center">
-              <FaMagic size={33} />
+              <FaMagic size={35} />
               <p className="ml-4">
                 Receive recommendations for your specific dietary restrictions
               </p>
