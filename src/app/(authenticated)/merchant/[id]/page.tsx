@@ -14,15 +14,15 @@ export default async function Page({
     user?: DefaultUser & { tags: string[] };
   } | null;
 
-  const data = await getMerchant(params.id);
+//   const data = await getMerchant(params.id);
 
-  if (!data.success || !data.data?.destination?.data) {
-    notFound();
-  }
+//   if (!data.success || !data.data?.destination?.data) {
+//     notFound();
+//   }
 
-  const detail = data.data.destination.data;
+//   const detail = data.data.destination.data;
 
   return (
-   
+   <></>
   );
 }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ButtonLogin from "./components/ButtonLogin";
 
 export default async function Page() {
   return (
@@ -26,9 +27,8 @@ export default async function Page() {
             height={1080}
           />
         </div>
-        <button className="bg-white text-green-600 font-semibold py-3 px-20 rounded-full shadow-md hover:shadow-lg transform transition hover:scale-105">
-          Login with Google
-        </button>
+
+        <ButtonLogin/>
       </main>
     </div>
   );
