@@ -60,7 +60,7 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
             src={props.detail.merchantBrief?.photoHref ?? "/default-image.jpg"}
             alt="Eeta Logo"
           />
-          <Link href={"/home"}>
+          <Link href={"/merchant"}>
             <button className="absolute top-5 left-5 w-10 h-10 bg-white text-white rounded-full flex items-center justify-center hover:bg-gray-100">
               <IoIosArrowBack className="fill-[#00AE4F]" size={30} />
             </button>
@@ -110,7 +110,7 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
           </div>
         </div>
 
-        <div className="mt-2 flex flex-col items-start px-6 bg-gray-100 p-3 border border-1 border-gray-200">
+        <div className="mt-2 flex flex-col items-start px-8 bg-gray-100 p-3 border border-1 border-gray-200">
           <p className="font-bold">
             {metersToKilometers(distance)}Km distance from you!
           </p>
