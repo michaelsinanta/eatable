@@ -3,6 +3,8 @@ import Head from "next/head";
 import SearchForm from "./SearchForm";
 import ToggleSwitch from "./ToggleSwitch";
 import MerchantList from "./MerchantList";
+import Link from "next/link";
+import { IoIosArrowBack } from "react-icons/io";
 
 interface MerchantPageProps {
   detail: any;
@@ -18,9 +20,19 @@ export function MerchantPage(props: MerchantPageProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <div className="flex flex-col items-center justify-center mb-5 mt-2">
+        <Link
+          href={"/home"}
+          className="text-gray-800 text-xl font-semibold text-left w-full items-center flex"
+        >
+          <IoIosArrowBack className="inline mr-4" size={28} />
+          <p>Home</p>
+        </Link>
+      </div>
+
       <SearchForm />
       <ToggleSwitch />
-      <MerchantList detail={props.detail}/>
+      <MerchantList detail={props.detail} />
     </div>
   );
 }

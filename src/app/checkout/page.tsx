@@ -31,22 +31,22 @@ const Header = () => (
   <header className="bg-white shadow-sm py-4 mb-4">
     <div className="flex items-center px-4">
       <Link href={"/merchant"}>
-      <button className="mr-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-black"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </button>
+        <button className="mr-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-black"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
       </Link>
 
       <h1 className="text-lg font-semibold">Warung Aman - SCBD, Jakarta</h1>

@@ -32,9 +32,9 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item }) => {
       </div>
       <div className="mx-2 w-full mb-4 cursor-pointer">
         <Link href={"/checkout"}>
-        <div className="rounded-full border border-2 border-[#00AE4F] mx-2 text-[#00AE4F] items-center p-2 text-center font-semibold">
-          Add
-        </div>
+          <div className="rounded-full border border-2 border-[#00AE4F] mx-2 text-[#00AE4F] items-center p-2 text-center font-semibold">
+            Add
+          </div>
         </Link>
       </div>
     </div>
