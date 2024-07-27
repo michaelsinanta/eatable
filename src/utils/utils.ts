@@ -21,3 +21,23 @@ export function formatPrice(price?: number) {
     return `${price}`;
   }
 }
+
+export function metersToKilometers(meters?: number | null): string {
+  if (meters === undefined || meters === null) {
+    return "No conversion available";
+  } else {
+    return (meters / 1000).toFixed(2);
+  }
+}
+
+export function metersToMinutes(
+  meters?: number | null,
+  speedMetersPerMinute: number = 1000,
+): string {
+  if (meters === undefined || meters === null) {
+    return "No conversion available";
+  } else {
+    const minutes = meters / speedMetersPerMinute;
+    return Math.round(minutes).toString();
+  }
+}
