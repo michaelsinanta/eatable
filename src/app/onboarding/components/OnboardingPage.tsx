@@ -17,7 +17,7 @@ export function OnboardingPage() {
 
   const handleCheckboxChange = (tag: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((i) => i !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((i) => i !== tag) : [...prev, tag],
     );
   };
 
@@ -38,7 +38,7 @@ export function OnboardingPage() {
       <div className="h-full flex flex-col gap-4 overflow-y-auto hide-scrollbar">
         {tags
           .filter((tag) =>
-            tag.toLowerCase().includes(searchTerm.trim().toLowerCase())
+            tag.toLowerCase().includes(searchTerm.trim().toLowerCase()),
           )
           .map((tag, index) => (
             <div

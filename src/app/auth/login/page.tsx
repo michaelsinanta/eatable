@@ -28,7 +28,7 @@ export default async function Page() {
           />
         </div>
 
-        <ButtonLogin/>
+        <ButtonLogin />
       </main>
     </div>
   );
