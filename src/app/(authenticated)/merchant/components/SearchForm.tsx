@@ -1,8 +1,7 @@
-
-import { FaSlidersH } from 'react-icons/fa';
+import { FaSlidersH } from "react-icons/fa";
 
 export default function SearchForm() {
-    return (
+  return (
     <div className="flex flex-row gap-4 justify-center items-center mb-4">
       <form className="flex flex-row w-full items-center">
         <label htmlFor="simple-search" className="sr-only">
@@ -37,5 +36,5 @@ export default function SearchForm() {
       </form>
       <FaSlidersH size={27} color="black" />
     </div>
-  )};
-  
+  );
+}
