@@ -1,13 +1,41 @@
 "use client";
-import { useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { IoIosArrowForward } from "react-icons/io";
+import sendToCohere from "./actions/rag";
+import { useChatContext } from "@/context/ChatContext";
+import { SessionContextValue, useSession } from "next-auth/react";
+import { Merchant } from "@prisma/client";
+import { DefaultUser, Session } from "next-auth";
 
 export default function Home() {
   const [chatOpen, setChatOpen] = useState(false);
+  const { chatHistory, setChatHistory } = useChatContext() || {}
+  const session = useSession()
 
   const toggleChat = () => {
+    if (!chatOpen && (!chatHistory || chatHistory?.length === 0)) {
+      console.log("session:", session);
+      if (session.status !== "authenticated") {
+        console.log("user not ready yet");
+        return;
+      }
+      setChatHistory && setChatHistory((prev) => {
+        if (!prev) {
+          return [{
+            data: null,
+            message: `Hi, ${session.data?.user?.name || "NONE"}! What do you want to eat today?`,
+            source: "bot",
+          },]
+        }
+        return [{
+          data: null,
+          message: `Hi, ${session.data?.user?.name || "NONE"}! What do you want to eat today?`,
+          source: "bot",
+        }, ...prev]
+      })
+    }
     setChatOpen(!chatOpen);
   };
 
@@ -22,7 +50,7 @@ export default function Home() {
       <Header />
 
       <MainContent toggleChat={toggleChat} />
-      {chatOpen && <Chat toggleChat={toggleChat} />}
+      {chatOpen && <Chat toggleChat={toggleChat} chatHistory={chatHistory} />}
     </div>
   );
 }
@@ -152,7 +180,12 @@ const Recommendations = () => (
   </>
 );
 
-const Chat = ({ toggleChat }: any) => (
+type ChatType = {
+  toggleChat: any
+  chatHistory?: any[]
+}
+
+const Chat = ({ toggleChat, chatHistory }: ChatType) => (
   <>
     <div className="fixed inset-0 bg-black opacity-75 z-10"></div>
     <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white p-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto">
@@ -162,99 +195,175 @@ const Chat = ({ toggleChat }: any) => (
           Close
         </button>
       </div>
-      <div className="space-y-8">
-        <ChatMessage
-          avatar={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          }
-          message="Hi, Alex. What do you feel like eating today?"
-        />
-        <ChatMessage message="Ask me a series of questions." button />
-        <ChatMessage
-          avatar={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          }
-          message="Okay! Hot, warm, or cold?"
-        />
+      <div className="gap-y-4 overflow-y-scroll h-fit max-h-[70dvh] flex flex-col-reverse px-4">
+        { chatHistory ? chatHistory.map((item, idx) => (
+          !item.data ?
+          <ChatMessage
+            key={idx}
+            avatar={
+              item.source === "bot" && <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            }
+            message={item.message}
+            className={item.source === "bot" ? 
+              "text-start"
+              : 
+              "text-end"
+            }
+          /> :
+          <div key={idx} className="flex flex-col gap-2">
+            {item.data.map((dest: Merchant, i: number) => (
+              <div key={i} className="p-4 border-gray-300 rounded-md">
+                <h3 className="font-bold">{dest.chainName}</h3>
+                <p>{dest.tags}</p>
+              </div>
+            ))}
+          </div>
+          )
+        ) : <p>Whoops! Something went wrong</p>}
       </div>
       <ChatInput />
     </div>
   </>
 );
 
-const ChatMessage = ({ avatar, message, button }: any) => (
-  <div className="flex space-x-4 items-start">
-    {avatar && (
-      <div className="flex-shrink-0">
-        <div className="w-16 h-16 rounded-full border-2 border-green-500 flex items-center justify-center">
-          <Image
-            width={200}
-            height={200}
-            src="/images/green-chatbot.svg"
-            alt="Eeta Logo"
-            className="w-12 h-12 p-1"
-          />
+const ChatMessage = ({ avatar, message, button, className }: any) => {
+  return (
+    <div className={`flex space-x-4 items-start ${className}`}>
+      {avatar && (
+        <div className="flex-shrink-0">
+          <div className="w-16 h-16 rounded-full border-2 border-green-500 flex items-center justify-center">
+            <Image
+              width={200}
+              height={200}
+              src="/images/green-chatbot.svg"
+              alt="Eeta Logo"
+              className="w-12 h-12 p-1"
+            />
+          </div>
         </div>
-      </div>
-    )}
-    <div
-      className={`bg-green-100 p-4 rounded-lg flex-1 ${
-        button ? "cursor-pointer bg-[#00AE4F] text-green-900" : ""
-      }`}
-    >
-      <p>{message}</p>
-    </div>
-  </div>
-);
-
-const ChatInput = () => (
-  <div className="flex mt-4">
-    <input
-      type="text"
-      placeholder="Write your answer..."
-      className="flex-grow px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none"
-    />
-    <button className="px-4 py-2 bg-[#00AE4F] text-white rounded-r-full">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+      )}
+      <div
+        className={`bg-green-100 p-4 rounded-lg flex-1 ${
+          button ? "cursor-pointer bg-[#00AE4F] text-green-900" : ""
+        }`}
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M8 12h8m0 0l-4 4m4-4l-4-4m-8 8V8"
+        <p style={{ whiteSpace: "pre-line" }}>{message}</p>
+      </div>
+    </div>
+  );
+}
+
+
+const ChatInput = () => {
+  const { chatHistory, setChatHistory } = useChatContext() || {}
+  const session = useSession();
+
+  function submitChatInput(prompt: string) {
+    // user msg
+    setChatHistory && setChatHistory((prev) => {
+      if (!prev) {
+        return [{
+          source: "user",
+          message: prompt,
+        }]
+      }
+      return [{
+        source: "user",
+        message: prompt,
+      }, ...prev]
+    })
+
+    const resp = sendToCohere(prompt, (session.data?.user as any)?.tags);
+    resp.then(
+      (res) => {
+        alert("success")
+        console.log(res)
+        // bot msg
+        setChatHistory && setChatHistory((prev) => {
+          if (!prev) {
+            return [{
+              source: "bot",
+              message: res.text
+            }]
+          }
+          return [{
+            source: "bot",
+            message: res.text
+          }, ...prev]
+        })
+
+        // destinations cited
+        setChatHistory && res.destinationCited && setChatHistory((prev) => {
+          if (!prev) {
+            return [{
+              source: "bot",
+              data: res.destinationCited.slice(
+                0, Math.min(res.destinationCited.length, 10)
+              )
+            }]
+          }
+          return [{
+            source: "bot",
+            data: res.destinationCited,
+          }, ...prev]
+        })
+      }
+    ).catch(
+      (err) => {
+        console.log("awooga err", err)
+      }
+    )
+  }
+
+  const [prompt, setPrompt] =  useState<string>('');
+  return (
+    <div className="flex mt-4">
+      <form
+        onSubmit={(e) => { 
+          e.preventDefault();
+          submitChatInput(prompt) ;
+        }}
+        className="flex flex-row gap-0 w-full"
+      >
+        <input
+          type="text"
+          placeholder="Write your response..."
+          className="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none w-full"
+          value={prompt}
+          onChange={(e) => { 
+            setPrompt(e.currentTarget.value)
+          }}
         />
-      </svg>
-    </button>
-  </div>
-);
+        <button className="px-4 py-2 bg-[#00AE4F] text-white rounded-r-lg" type="submit">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M8 12h8m0 0l-4 4m4-4l-4-4m-8 8V8"
+            />
+          </svg>
+        </button>
+      </form>
+    </div>
+  );
+}
