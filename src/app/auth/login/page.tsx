@@ -7,7 +7,7 @@ export default async function Page() {
       <main className="flex flex-col items-center justify-center w-full flex-1 text-center">
         <div className="w-[300px]">
           <Image
-            src="/images/logo-eatable.svg"
+            src="/images/eatable.svg"
             alt="eatable"
             quality={100}
             width={1920}
