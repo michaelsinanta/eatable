@@ -1,9 +1,17 @@
+"use client";
 import { FaMagic, FaComment } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import Image from "next/image";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const IntroducingEeta = () => {
+  const router = useRouter();
+
+  const handleNext = () => {
+    router.push("/discovery");
+  };
+
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-md bg-white">
@@ -45,7 +53,10 @@ const IntroducingEeta = () => {
             </div>
           </div>
           <div className="w-full bg-white flex-shrink-0 h-12 mt-4">
-            <button className="w-full justify-center rounded-lg bg-[#00AE4F] px-5 py-3 text-center text-lg font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">
+            <button
+              onClick={handleNext}
+              className="w-full justify-center rounded-lg bg-[#00AE4F] px-5 py-3 text-center text-lg font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"
+            >
               Next
             </button>
           </div>

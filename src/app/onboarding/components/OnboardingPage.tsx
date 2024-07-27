@@ -9,7 +9,7 @@ import { onboardingUser } from "../actions/onboarding.action";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 
-export function OnboardingPage() {
+export function OnboardingPage({ email }: { email: string }) {
   const { pending } = useFormStatus();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +19,15 @@ export function OnboardingPage() {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((i) => i !== tag) : [...prev, tag],
     );
+  };
+
+  const handleNext = async () => {
+    try {
+      const res = await onboardingUser(email, selectedTags);
+      if (res.success) {
+        router.push("/onboarding/post");
+      }
+    } catch (err) {}
   };
 
   return (
@@ -65,6 +74,7 @@ export function OnboardingPage() {
       </div>
       <div className="w-full bg-white flex-shrink-0 h-12 mt-4">
         <button
+          onClick={handleNext}
           disabled={pending}
           className="w-full justify-center rounded-lg bg-[#00AE4F] px-5 py-3 text-center text-lg font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"
         >
