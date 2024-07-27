@@ -60,7 +60,7 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
             src={props.detail.merchantBrief?.photoHref ?? "/default-image.jpg"}
             alt="Eeta Logo"
           />
-          <Link href={"/discovery"}>
+          <Link href={"/home"}>
             <button className="absolute top-5 left-5 w-10 h-10 bg-white text-white rounded-full flex items-center justify-center hover:bg-gray-100">
               <IoIosArrowBack className="fill-[#00AE4F]" size={30} />
             </button>
