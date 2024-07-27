@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tags String[]
+
+  onboarding Boolean @default(false)
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+model Merchant {
+  id                      String                @id @default(cuid())
+  addressId               String?
+  address                 Address?              @relation(fields: [addressId], references: [id])
+  latlngId                String?
+  latlng                  Latlng?               @relation(fields: [latlngId], references: [id])
+  estimatedDeliveryTime   Int
+  merchantBriefId         String?
+  merchantBrief           MerchantBrief?        @relation(fields: [merchantBriefId], references: [id])
+  chainID                 String
+  chainName               String
+  estimatedDeliveryFeeId  String?
+  estimatedDeliveryFee    EstimatedDeliveryFee? @relation(fields: [estimatedDeliveryFeeId], references: [id])
+  merchantStatusInfoId    String?
+  merchantStatusInfo      MerchantStatusInfo?   @relation(fields: [merchantStatusInfoId], references: [id])
+  sideLabels              SideLabel[]
+  businessType            String
+  littleIconLabel         LittleIconLabel[]
+  withSaverDeliveryOption Boolean
+  collectionIDs           String[]
+  tags                    String[]
+}
+
+model Address {
+  id       String     @id @default(cuid())
+  name     String
+  Merchant Merchant[]
+}
+
+model Latlng {
+  id        String     @id @default(cuid())
+  latitude  Float
+  longitude Float
+  Merchant  Merchant[]
+}
+
+model MerchantBrief {
+  id                     String       @id @default(cuid())
+  description            String
+  cuisine                String[]
+  photoHref              String
+  smallPhotoHref         String
+  iconHref               String
+  halal                  Boolean
+  isIntegrated           Boolean
+  openHoursId            String?
+  openHours              OpenHours?   @relation(fields: [openHoursId], references: [id])
+  distanceInKm           Float
+  rating                 Float
+  vote_count             Int
+  promoId                String?
+  promo                  Promo?       @relation(fields: [promoId], references: [id])
+  deliverBy              String
+  displayInfoId          String?
+  displayInfo            DisplayInfo? @relation(fields: [displayInfoId], references: [id])
+  priceTag               Int
+  deliverOptions         String
+  photoHrefFallback      String
+  smallPhotoHrefFallback String
+  iconHrefFallback       String
+  Merchant               Merchant[]
+}
+
+model Promo {
+  id            String          @id @default(cuid())
+  hasPromo      Boolean
+  description   String
+  MerchantBrief MerchantBrief[]
+}
+
+model MerchantStatusInfo {
+  id        String     @id @default(cuid())
+  status    String
+  guideText String
+  Merchant  Merchant[]
+}
+
+model SideLabel {
+  id                      String           @id @default(cuid())
+  merchantId              String
+  merchant                Merchant         @relation(fields: [merchantId], references: [id])
+  type                    String
+  displayedTextHtmlFormat String
+  backgroundColor         String
+  displayedText           String
+  attributionDataId       String?
+  attributionData         AttributionData? @relation(fields: [attributionDataId], references: [id])
+  icon                    String
+}
+
+model AttributionData {
+  id          String      @id @default(cuid())
+  decisionID  String
+  discoveryID String
+  campaignID  String
+  SideLabel   SideLabel[]
+}
+
+model LittleIconLabel {
+  id                 String   @id @default(cuid())
+  merchantId         String
+  merchant           Merchant @relation(fields: [merchantId], references: [id])
+  littleIconLabelURL String
+  labelText          String
+  labelDescription   String
+  labelID            String
+  labelName          String
+}
+
+model OpenHours {
+  id             String          @id @default(cuid())
+  open           Boolean
+  displayedHours String
+  sun            String
+  mon            String
+  tue            String
+  wed            String
+  thu            String
+  fri            String
+  sat            String
+  MerchantBrief  MerchantBrief[]
+}
+
+model DisplayInfo {
+  id            String          @id @default(cuid())
+  primaryText   String
+  MerchantBrief MerchantBrief[]
+}
+
+model EstimatedDeliveryFee {
+  id                 String     @id @default(cuid())
+  currencyCode       String
+  currencySymbol     String
+  currencyExponent   Int
+  price              Int
+  priceDisplay       String
+  multiplier         Int
+  priceDisplayHtml   String
+  hasDiscountedPrice Boolean
+  Merchant           Merchant[]
+}
