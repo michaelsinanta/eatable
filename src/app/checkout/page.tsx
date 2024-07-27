@@ -4,6 +4,7 @@ import Head from "next/head";
 import { IoLocationSharp } from "react-icons/io5";
 import { IoWallet } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
+import Link from "next/link";
 
 export default function OrderSummary() {
   return (
@@ -29,6 +30,7 @@ export default function OrderSummary() {
 const Header = () => (
   <header className="bg-white shadow-sm py-4 mb-4">
     <div className="flex items-center px-4">
+      <Link href={"/merchant"}>
       <button className="mr-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -45,6 +47,7 @@ const Header = () => (
           />
         </svg>
       </button>
+      </Link>
 
       <h1 className="text-lg font-semibold">Warung Aman - SCBD, Jakarta</h1>
     </div>
