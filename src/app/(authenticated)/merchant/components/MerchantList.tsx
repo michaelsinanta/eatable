@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import haversine from "haversine-distance";
 import { metersToKilometers, metersToMinutes } from "@/utils/utils";
 import { useRouter } from "next/navigation";
+import { FaStar } from 'react-icons/fa';
 
 export default function MerchantList({ detail }: { detail: any[] }) {
   const [userLocation, setUserLocation] = useState<{
@@ -73,9 +74,12 @@ export default function MerchantList({ detail }: { detail: any[] }) {
               height={128}
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg">
-              {merchant.merchantBrief.rating} (
-              {merchant.merchantBrief.vote_count})
+            <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
+              <FaStar />
+              <p className="my-auto">
+                {merchant.merchantBrief.rating} (
+                {merchant.merchantBrief.vote_count})
+              </p>
             </div>
           </div>
           <div className="flex-1">

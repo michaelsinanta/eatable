@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { IoIosArrowForward } from "react-icons/io";
@@ -10,6 +10,7 @@ import { Merchant } from "@prisma/client";
 import { DefaultUser, Session } from "next-auth";
 import { IoSend } from "react-icons/io5";
 import { getAllMerchants } from "../(authenticated)/merchant/[id]/actions/merchant.action";
+import { FaStar } from "react-icons/fa";
 
 interface MerchantPageProps {
   detail: any;
@@ -73,53 +74,84 @@ export default function Homepage(props: MerchantPageProps) {
   );
 }
 
-const Header = () => (
-  <div className="relative bg-gradient-to-r from-green-500 to-blue-500 p-4 pb-16">
-    <div className="text-white mb-4">
-      <h2 className="text-sm">DELIVER TO</h2>
-      <h1 className="text-lg font-bold">Jalan Lokasi No.1</h1>
-    </div>
-    <div className="absolute inset-x-0 bottom-0 transform translate-y-1/2 px-14">
-      <form className="flex flex-row w-full items-center">
-        <label htmlFor="simple-search" className="sr-only">
-          Search
-        </label>
-        <div className="relative w-full">
-          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg
-              className="w-4 h-4"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
-            </svg>
+const Header = () => {
+  const [address, setAddress] = useState<string | null>(null);
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            );
+            const data = await response.json();
+            // console.log("addr", data)
+            // setAddress(data.display_name);
+            setAddress(`${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`)
+          } catch (err) {
+            console.log("Failed to fetch address");
+            setAddress("South Quarter, Jakarta, Indonesia");
+          }
+        },
+        (err) => {
+          console.log("Failed to get location: " + err.message);
+          setAddress("South Quarter, Jakarta, Indonesia");
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by your browser");
+      setAddress("South Quarter, Jakarta, Indonesia");
+    }
+  }, []);
+
+  return (
+    <div className="relative bg-gradient-to-r from-green-500 to-blue-500 p-4 pb-16">
+      <div className="text-white h-fit max-h-[10dvh]">
+        <p className="">Deliver to:</p>
+        <p className=" font-semibold max-w-[80%]">{address || "loading..."}</p>
+      </div>
+      <div className="absolute inset-x-0 bottom-0 transform translate-y-1/2 px-14">
+        <form className="flex flex-row w-full items-center">
+          <label htmlFor="simple-search" className="sr-only">
+            Search
+          </label>
+          <div className="relative w-full">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <svg
+                className="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              id="simple-search"
+              className="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search for people, topics, or keywords"
+              required
+            />
           </div>
-          <input
-            type="text"
-            id="simple-search"
-            className="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Search for people, topics, or keywords"
-            required
-          />
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 const ChatBubble = () => {
   return (
-    <div className="flex items-center p-4 mt-10">
-      <div className="flex-shrink-0">
-        <div className="w-16 h-16 rounded-full border-2 border-green-500 flex items-center justify-center">
+    <div className="flex items-center px-4 mt-16 h-full">
+        <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center mb-auto">
           <Image
             width={200}
             height={200}
@@ -128,10 +160,9 @@ const ChatBubble = () => {
             className="w-12 h-12 p-1"
           />
         </div>
-      </div>
       <div className="ml-3 w-2/3">
-        <div className="bg-white border border-green-500 text-gray-800 px-4 py-2 rounded-lg shadow-md">
-          Hi John! What do you want to eat today?
+        <div className="border-[#00AE4F] border-2 text-[#006A2F] mb-3 p-3 max-w-xs rounded-r-xl rounded-b-xl">
+          Hi! What do you want to eat today?
         </div>
       </div>
     </div>
@@ -140,14 +171,14 @@ const ChatBubble = () => {
 
 const MainContent = ({ toggleChat }: any) => (
   <div className="bg-white">
-    <div className="w-full flex justify-between items-center">
+    <div className="w-full flex justify-between items-center h-full">
       <ChatBubble />
     </div>
 
-    <div className="w-full bg-white flex-shrink-0 h-12 mt-4 px-5 mb-7">
+    <div className="w-full bg-white flex-shrink-0 h-12 px-5 mb-7">
       <button
         onClick={toggleChat}
-        className="w-full justify-center rounded-lg bg-[#00AE4F] px-5 py-3 text-center text-md font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"
+        className="w-full justify-center rounded-b-xl rounded-l-xl bg-[#00AE4F] px-5 py-3 text-center text-md font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"
       >
         Talk to Eeta!
       </button>
@@ -163,7 +194,7 @@ const foodImages = [
     category: "Chicken",
   },
   {
-    url: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2023/11/21/FNK_Intsant-Pot-Texas-Style-Chili-Mac_H1.jpg.rend.hgtvcom.1280.960.suffix/1700604212111.jpeg",
+    url: "/assets/pasta.jpeg", // the sndimg.com image wont load, gue dl aja
     category: "Pasta",
   },
   {
@@ -224,9 +255,12 @@ const Recommendations = ({ detail }: { detail: any[] }) => (
               height={128}
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg">
-              {merchant.merchantBrief.rating} (
-              {merchant.merchantBrief.vote_count})
+            <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
+              <FaStar />
+              <p className="my-auto">
+                {merchant.merchantBrief.rating} (
+                {merchant.merchantBrief.vote_count})
+              </p>
             </div>
           </div>
           <div className="flex-1 p-1">
@@ -273,9 +307,9 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
     <div className="fixed inset-0 bg-black opacity-75 z-10"></div>
     <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white p-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <span className="text-lg font-bold">Eeta Bot</span>
+        {/* <span className="text-lg font-bold">Eeta Bot</span> */}
         <button className="text-[#00AE4F]" onClick={toggleChat}>
-          Close
+          Back
         </button>
       </div>
       <div className="gap-y-4 pt-5 overflow-y-scroll h-fit max-h-[70dvh] flex flex-col-reverse px-4">
@@ -283,6 +317,7 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
           chatHistory.map((item, idx) =>
             !item.data ? (
               <ChatMessage
+                source={item.source}
                 key={idx}
                 avatar={
                   item.source === "bot" && (
@@ -307,10 +342,38 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
               />
             ) : (
               <div key={idx} className="flex flex-col gap-2">
-                {item.data.map((dest: Merchant, i: number) => (
-                  <div key={i} className="p-4 border-gray-300 rounded-md">
-                    <div className="max-w-sm rounded overflow-hidden shadow-lg border border-[#00AE4F] p-4 bg-green-100">
-                      {/* <img className="w-full rounded-lg mb-4" src={} /> */}
+                {item.data.map((dest: any, i: number) => (
+                  <div key={i} className="relative border border-gray-300 rounded-md">
+                    <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
+                      <FaStar />
+                      <p className="my-auto">
+                        {dest.merchantBrief.rating} (
+                        {dest.merchantBrief.vote_count})
+                      </p>
+                    </div>
+                    <Image 
+                      src={dest.merchantBrief.photoHref} 
+                      alt={"Merchant picture"} 
+                      width={200}
+                      height={100}
+                      className="w-full object-cover rounded-t-md max-h-[150px]"
+                    />
+                    <div className="px-6 py-4 mb-2 h-full">
+                      <h3 className="font-semibold text-xl">{dest.chainName}</h3>
+                      <p>{dest.merchantBrief.description}</p>
+                      <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {dest.tags.map((cuisineItem: string, j: number) => (
+                          <>
+                            <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">{cuisineItem}</span>
+                          </>
+                        ))}
+                        {!dest.tags || dest.tags.length === 0 && <>
+                          <span className="bg-red-100 rounded-full px-3 w-fit text-sm">No Tags</span>
+                        </>}
+                      </div>
+                    </div>
+                    {/* <div className="max-w-sm rounded overflow-hidden shadow-lg border border-[#00AE4F] p-4 bg-green-100">
                       <div className="px-6 py-4">
                         <div className="font-bold text-xl mb-2">
                           {dest.chainName}
@@ -350,7 +413,7 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
                           View More
                         </button>
                       </div>
-                    </div>
+                    </div> */}
                     {/* <h3 className="font-bold">{dest.chainName}</h3>
                     <p>{dest.tags}</p> */}
                   </div>
@@ -367,16 +430,16 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
   </>
 );
 
-const ChatMessage = ({ avatar, message, button, className }: any) => {
+const ChatMessage = ({ avatar, message, button, className, source }: any) => {
   return (
     <div
       className={`flex ${
-        avatar ? "items-start space-x-4" : "justify-end space-x-reverse"
+        avatar ? "items-start space-x-2" : "justify-end space-x-reverse"
       } ${className}`}
     >
       {avatar && (
         <div className="flex-shrink-0">
-          <div className="w-16 h-16 rounded-full border-2 border-[#00AE4F] flex items-center justify-center">
+          <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center">
             <Image
               width={200}
               height={200}
@@ -388,11 +451,16 @@ const ChatMessage = ({ avatar, message, button, className }: any) => {
         </div>
       )}
       <div
-        className={`rounded-lg mb-3 p-3 max-w-xs ${
+        className={`mb-3 p-3 max-w-xs ${
           !avatar
             ? "bg-[#00AE4F] text-white self-end w-fit"
             : "border-[#00AE4F] border-2 text-[#006A2F]"
-        } ${button ? "cursor-pointer bg-[#00AE4F] text-green-900" : ""}`}
+        } ${
+          source === "bot"
+            ? "rounded-r-xl rounded-b-xl"
+            : "rounded-l-xl rounded-b-xl"
+        }
+        ${button ? "cursor-pointer bg-[#00AE4F] text-green-900" : ""}`}
       >
         <p style={{ whiteSpace: "pre-line" }}>{message}</p>
       </div>
@@ -460,7 +528,7 @@ const ChatInput = () => {
                   source: "bot",
                   data: res.destinationCited.slice(
                     0,
-                    Math.min(res.destinationCited.length, 10)
+                    Math.min(res.destinationCited.length, 5)
                   ),
                 },
               ];
@@ -492,7 +560,7 @@ const ChatInput = () => {
       >
         <input
           type="text"
-          placeholder="Write your answer..."
+          placeholder="Write your response..."
           className="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none w-full"
           value={prompt}
           onChange={(e) => {
