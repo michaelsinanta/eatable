@@ -6,12 +6,6 @@ import { IoIosArrowBack } from "react-icons/io";
 import { FaSlidersH } from "react-icons/fa";
 
 export default function Home() {
-  const [chatOpen, setChatOpen] = useState(false);
-
-  const toggleChat = () => {
-    setChatOpen(!chatOpen);
-  };
-
   return (
     <div className="min-h-screen p-4">
       <Head>
@@ -24,7 +18,6 @@ export default function Home() {
       <CategoryCarousel />
       <ToggleSwitch />
       <RestaurantList />
-      {chatOpen && <Chat toggleChat={toggleChat} />}
     </div>
   );
 }
@@ -133,104 +126,5 @@ const RestaurantList = () => (
           </div>
         </div>
       ))}
-  </div>
-);
-
-const Chat = ({ toggleChat }: any) => (
-  <>
-    <div className="fixed inset-0 bg-black opacity-70 z-10"></div>
-    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white p-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-lg font-bold">Eeta Bot</span>
-        <button className="text-[#00AE4F]" onClick={toggleChat}>
-          Close
-        </button>
-      </div>
-      <div className="space-y-16">
-        <ChatMessage
-          avatar={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          }
-          message="Hi, Alex. What do you feel like eating today?"
-        />
-        <ChatMessage message="Ask me a series of questions." button />
-        <ChatMessage
-          avatar={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          }
-          message="Okay! Hot, warm, or cold?"
-        />
-      </div>
-      <ChatInput />
-    </div>
-  </>
-);
-
-const ChatMessage = ({ avatar, message, button }: any) => (
-  <div className="flex space-x-4 items-start">
-    {avatar && (
-      <div className="w-10 h-10 bg-[#00AE4F] rounded-full flex items-center justify-center">
-        {avatar}
-      </div>
-    )}
-    <div
-      className={`bg-green-100 p-4 rounded-lg flex-1 ${
-        button ? "cursor-pointer bg-[#00AE4F] text-white" : ""
-      }`}
-    >
-      <p>{message}</p>
-    </div>
-  </div>
-);
-
-const ChatInput = () => (
-  <div className="flex mt-4">
-    <input
-      type="text"
-      placeholder="Write your answer..."
-      className="flex-grow px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none"
-    />
-    <button className="px-4 py-2 bg-[#00AE4F] text-white rounded-r-full">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M8 12h8m0 0l-4 4m4-4l-4-4m-8 8V8"
-        />
-      </svg>
-    </button>
   </div>
 );
