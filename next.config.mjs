@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ["food-cms.grab.com", "d1sag4ddilekf6.cloudfront.net"],
-  },
+    images: {
+        domains: ["food-cms.grab.com", "food.fnr.sndimg.com", "www.eatingwell.com", "cdn.vox-cdn.com", "assets.clevelandclinic.org", "images.immediate.co.uk", "encrypted-tbn0.gstatic.com"],
+    },
 };
 export default nextConfig;

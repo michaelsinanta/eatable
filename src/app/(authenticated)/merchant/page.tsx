@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DefaultUser, getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { getAllMerchants } from "./[id]/actions/merchant.action";
