@@ -6,9 +6,9 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import Homepage from "./homepage";
 
 export default async function Page({}: {}) {
-  const session = (await getServerSession(authOptions)) as {
-    user?: DefaultUser & { tags: string[] };
-  } | null;
+  //   const session = (await getServerSession(authOptions)) as {
+  //     user?: DefaultUser & { tags: string[] };
+  //   } | null;
 
   const data = await getAllMerchants();
 
@@ -18,5 +18,5 @@ export default async function Page({}: {}) {
 
   const detail = data.data;
 
-  return <Homepage detail={detail} user={session?.user!!} />;
+  return <Homepage detail={detail} />;
 }

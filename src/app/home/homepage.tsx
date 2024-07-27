@@ -13,7 +13,7 @@ import { getAllMerchants } from "../(authenticated)/merchant/[id]/actions/mercha
 
 interface MerchantPageProps {
   detail: any;
-  user: DefaultUser & { tags?: string[] };
+  //   user: DefaultUser & { tags?: string[] };
 }
 
 export default function Homepage(props: MerchantPageProps) {
@@ -66,11 +66,8 @@ export default function Homepage(props: MerchantPageProps) {
 
       <Header />
 
-      <MainContent
-        detail={props.detail}
-        user={props.user}
-        toggleChat={toggleChat}
-      />
+      <MainContent toggleChat={toggleChat} />
+      <Recommendations detail={props.detail} />
       {chatOpen && <Chat toggleChat={toggleChat} chatHistory={chatHistory} />}
     </div>
   );
@@ -141,7 +138,7 @@ const ChatBubble = () => {
   );
 };
 
-const MainContent = ({ toggleChat }: any, props: MerchantPageProps) => (
+const MainContent = ({ toggleChat }: any) => (
   <div className="bg-white">
     <div className="w-full flex justify-between items-center">
       <ChatBubble />
@@ -157,7 +154,6 @@ const MainContent = ({ toggleChat }: any, props: MerchantPageProps) => (
     </div>
 
     <FoodOptions />
-    <Recommendations detail={props.detail} user={props.user} />
   </div>
 );
 
@@ -211,29 +207,58 @@ const FoodOptions = () => (
   </div>
 );
 
-const Recommendations = (props: MerchantPageProps) => (
+const Recommendations = ({ detail }: { detail: any[] }) => (
   <>
     <h2 className="text-2xl font-semibold mb-4 ml-5">Recommended For You</h2>
     <div className="flex space-x-4 overflow-x-auto no-scrollbar">
-      {Array(3)
-        .fill("Warung Aman")
-        .map((item, index) => (
-          <div key={index} className="w-40 ml-5 rounded-lg flex-shrink-0 pb-4">
-            <div className="w-full h-32 bg-gray-300 rounded-xl mb-4"></div>
-            <h3 className="text-md font-semibold">{props.detail}</h3>
-            <div className="flex space-x-2 mt-2">
-              <span className="bg-green-200 text-black text-xs py-1 px-2 rounded-full">
-                Gluten-Free
-              </span>
-              <span className="bg-green-200 text-black text-xs py-1 px-2 rounded-full">
-                Vegan
-              </span>
+      {detail.map((merchant, index) => (
+        <div
+          key={merchant.id}
+          className="flex flex-col ml-5 items-start mb-4 p-1 cursor-pointer"
+        >
+          <div className="relative w-40 h-40 bg-gray-300 rounded-lg overflow-hidden mr-4">
+            <Image
+              src={merchant.merchantBrief.photoHref}
+              alt="Restaurant"
+              width={128}
+              height={128}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg">
+              {merchant.merchantBrief.rating} (
+              {merchant.merchantBrief.vote_count})
             </div>
-            <span className="text-sm ml-1 text-gray-500 mt-2 block">
-              View 3 more
-            </span>
           </div>
-        ))}
+          <div className="flex-1 p-1">
+            <div className="flex justify-between items-center">
+              <h3 className="text-md font-semibold">{merchant.chainName}</h3>
+            </div>
+            <div className="text-sm flex flex-row gap-3 text-gray-500">
+              <p>
+                <span className="font-semibold">$</span>$$$
+              </p>
+              {/* <p className="whitespace-nowrap">
+                {distances[index] ? `${distances[index].distance} km` : "..."}
+              </p>
+              <p>
+                {distances[index]
+                  ? `Delivery in ${distances[index].time} min`
+                  : "..."}
+              </p> */}
+            </div>
+            <div className="flex flex-wrap gap-2 my-4">
+              {merchant.tags.map((tag: any, tagIndex: any) => (
+                <span
+                  key={tagIndex}
+                  className="bg-green-200 text-black text-xs py-1 px-2 rounded-full whitespace-nowrap text-center w-fit"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   </>
 );
