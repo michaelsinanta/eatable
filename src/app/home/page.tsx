@@ -27,6 +27,56 @@ export default function Home() {
   );
 }
 
+const foodImages = [
+  {
+    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp_WkuSJN7xa0xuMtYaWNxwErHgGqDL_LsxA&usqp=CAU",
+    category: "Chicken",
+  },
+  {
+    url: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2023/11/21/FNK_Intsant-Pot-Texas-Style-Chili-Mac_H1.jpg.rend.hgtvcom.1280.960.suffix/1700604212111.jpeg",
+    category: "Pasta",
+  },
+  {
+    url: "https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg",
+    category: "Healthy",
+  },
+  {
+    url: "https://cdn.vox-cdn.com/thumbor/bif3U7XKUqWpOUv91_fXLfzsIx8=/0x0:6000x4000/1200x675/filters:focal(2520x1520:3480x2480)/cdn.vox-cdn.com/uploads/chorus_image/image/71262429/Le_Fantome.0.jpg",
+    category: "Rice",
+  },
+  {
+    url: "https://assets.clevelandclinic.org/transform/2ff894bb-c69e-46b6-97f2-a9bcc69ecfd3/snack-foods-1263686908",
+    category: "Snack",
+  },
+  {
+    url: "https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Corndogs-7832ef6.jpg?quality=90&resize=556,505",
+    category: "Fast Food",
+  },
+];
+
+const menuItems = [
+  {
+    title: "Spaghetti Aglio Olio with Chicken",
+    description: "Garlic, dried chili flakes, parmesan bread crumbs.",
+    price: "39.000",
+    originalPrice: "70.000",
+    imageUrl: "/images/spaghetti.jpg",
+  },
+  {
+    title: "Bacon Mac & Cheese",
+    description: "Macaroni tossed in cheese and choice of bacon.",
+    price: "89.000",
+    imageUrl: "/images/mac-cheese.jpg",
+  },
+  {
+    title: "Beef Pepperoni Pizza",
+    description:
+      "Beef pepperoni, mozzarella, basil, house made marinara sauce.",
+    price: "120.000",
+    imageUrl: "/images/pepperoni-pizza.jpg",
+  },
+];
+
 const Header = () => (
   <div className="relative bg-gradient-to-r from-green-500 to-blue-500 p-4 pb-16">
     <div className="text-white mb-4">
@@ -113,15 +163,25 @@ const MainContent = ({ toggleChat }: any) => (
 );
 
 const FoodOptions = () => (
-  <div className="flex space-x-4 overflow-x-auto no-scrollbar mb-4 pb-4">
-    {Array(6)
-      .fill("Chicken")
-      .map((item, index) => (
-        <div key={index} className="flex ml-5 flex-col items-center">
-          <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
-          <span className="mt-2 text-sm">{item}</span>
+  <div className="flex space-x-4 overflow-x-auto no-scrollbar my-10">
+    {foodImages.map((food, index) => (
+      <div key={index} className="flex flex-col ml-5">
+        <div
+          key={index}
+          className="flex-shrink-0 w-20 h-20 rounded-full overflow-hidden"
+        >
+          <Image
+            width={200}
+            height={200}
+            src={food.url}
+            alt={`Chicken ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
         </div>
-      ))}
+
+        <h1 className="text-black text-center mt-2">{food.category}</h1>
+      </div>
+    ))}
   </div>
 );
 
