@@ -24,7 +24,7 @@ export default function MerchantList({ detail }: { detail: any[] }) {
         },
         (error) => {
           console.error("Error getting user location:", error);
-        },
+        }
       );
     }
   }, []);
@@ -38,7 +38,7 @@ export default function MerchantList({ detail }: { detail: any[] }) {
         };
         const distanceInMeters = haversine(userLocation, merchantLocation);
         const distanceInKilometers = parseFloat(
-          metersToKilometers(distanceInMeters),
+          metersToKilometers(distanceInMeters)
         );
         const roundedDistance = Math.round(distanceInKilometers);
         const estimatedTime = metersToMinutes(distanceInMeters);

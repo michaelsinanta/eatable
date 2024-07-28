@@ -13,6 +13,7 @@ import { getAllMerchants } from "../(authenticated)/merchant/[id]/actions/mercha
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
 import MerchantList from "../(authenticated)/merchant/components/MerchantList";
+import { useRouter } from "next/navigation";
 
 interface MerchantPageProps {
   detail: any;
@@ -249,6 +250,8 @@ const FoodOptions = () => (
 const Recommendations = ({ detail }: { detail: any[] }) => {
   const [randomMerchants, setRandomMerchants] = useState<any[]>([]);
 
+  const router = useRouter();
+
   useEffect(() => {
     const shuffleArray = (array: any[]) => {
       return array.sort(() => Math.random() - 0.5);
@@ -258,12 +261,17 @@ const Recommendations = ({ detail }: { detail: any[] }) => {
     setRandomMerchants(shuffledMerchants);
   }, [detail]);
 
+  const handleNext = (id: string) => {
+    router.push(`/merchant/${id}`);
+  };
+
   return (
     <>
       <h2 className="text-lg font-semibold ml-5 mb-3">Recommended For You</h2>
       <div className="flex overflow-x-auto no-scrollbar ml-5">
         {randomMerchants.map((merchant, index) => (
           <div
+            onClick={() => handleNext(merchant.id)}
             key={merchant.id}
             className="flex flex-col items-start gap-x-2 cursor-pointer w-[300px]"
           >
