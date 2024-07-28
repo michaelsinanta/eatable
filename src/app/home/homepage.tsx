@@ -121,7 +121,7 @@ const Header = () => {
         <p className=" font-semibold max-w-[80%]">{address || "loading..."}</p>
       </div>
       <div className="absolute inset-x-0 bottom-0 transform translate-y-1/2 px-14">
-        <form className="flex flex-row w-full items-center">
+        <form className="flex flex-row w-full items-center shadow-md">
           <label htmlFor="simple-search" className="sr-only">
             Search
           </label>
@@ -147,7 +147,7 @@ const Header = () => {
               type="text"
               id="simple-search"
               className="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search for people, topics, or keywords"
+              placeholder="What shall we deliver?"
               required
             />
           </div>
@@ -250,13 +250,16 @@ const FoodOptions = () => (
 );
 
 const Recommendations = ({ detail }: { detail: any[] }) => {
-  // Fungsi untuk mengacak array
-  const shuffleArray = (array: any[]) => {
-    return array.sort(() => Math.random() - 0.5);
-  };
+  const [randomMerchants, setRandomMerchants] = useState<any[]>([]);
 
-  // Mengacak array dan mengambil 15 item pertama
-  const randomMerchants = shuffleArray(detail).slice(0, 15);
+  useEffect(() => {
+    const shuffleArray = (array: any[]) => {
+      return array.sort(() => Math.random() - 0.5);
+    };
+
+    const shuffledMerchants = shuffleArray(detail).slice(0, 15);
+    setRandomMerchants(shuffledMerchants);
+  }, [detail]);
 
   return (
     <>
