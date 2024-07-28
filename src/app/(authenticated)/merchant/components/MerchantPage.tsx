@@ -11,6 +11,9 @@ interface MerchantPageProps {
   user: DefaultUser & { tags?: string[] };
 }
 
+export const maxDuration = 60; 
+export const dynamic = 'force-dynamic';
+
 export function MerchantPage(props: MerchantPageProps) {
   return (
     <div className="min-h-screen p-4">
