@@ -23,6 +23,9 @@ interface MerchantDetailPageProps {
   menu: any;
 }
 
+export const maxDuration = 60; 
+export const dynamic = 'force-dynamic';
+
 export function MerchantDetailPage(props: MerchantDetailPageProps) {
   const [distance, setDistance] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);

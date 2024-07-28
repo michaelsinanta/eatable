@@ -9,6 +9,9 @@ import { onboardingUser } from "../actions/onboarding.action";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 
+export const maxDuration = 60; 
+export const dynamic = 'force-dynamic';
+
 export function OnboardingPage({ email }: { email: string }) {
   const { pending } = useFormStatus();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
