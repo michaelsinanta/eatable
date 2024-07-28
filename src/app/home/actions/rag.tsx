@@ -9,7 +9,7 @@ const cohere = new CohereClient({
 
 export default async function sendToCohere(
   message: string,
-  userTags?: string[]
+  userTags?: string[],
 ) {
   try {
     const allDestinations = await prisma.merchant.findMany({
@@ -41,8 +41,8 @@ export default async function sendToCohere(
     const destinationCited = response.citations
       ?.map((citation) => citation.documentIds)
       .flat();
-    const destinationCitedDetails = allDestinations.filter((destination) =>
-      destinationCited?.includes(destination.id)
+    const destinationCitedDetails = allDestinations.filter(
+      (destination) => destinationCited?.includes(destination.id),
     );
 
     return {

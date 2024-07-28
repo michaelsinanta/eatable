@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import haversine from "haversine-distance";
 import { metersToKilometers, metersToMinutes } from "@/utils/utils";
 import { useRouter } from "next/navigation";
-import { FaStar } from 'react-icons/fa';
+import { FaStar } from "react-icons/fa";
 
 export default function MerchantList({ detail }: { detail: any[] }) {
   const [userLocation, setUserLocation] = useState<{

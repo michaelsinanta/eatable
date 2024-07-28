@@ -13,7 +13,7 @@ import { BsStars } from "react-icons/bs";
 import MenuItemCard from "./MenuItemCard";
 import { IoIosArrowBack } from "react-icons/io";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 interface MerchantDetailPageProps {
   detail: any;
   user: DefaultUser & { tags?: string[] };
@@ -23,6 +23,7 @@ interface MerchantDetailPageProps {
 export function MerchantDetailPage(props: MerchantDetailPageProps) {
   const [distance, setDistance] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -60,11 +61,13 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
             src={props.detail.merchantBrief?.photoHref ?? "/default-image.jpg"}
             alt="Eeta Logo"
           />
-          <Link href={"/merchant"}>
-            <button className="absolute top-5 left-5 w-10 h-10 bg-white text-white rounded-full flex items-center justify-center hover:bg-gray-100">
-              <IoIosArrowBack className="fill-[#00AE4F]" size={30} />
-            </button>
-          </Link>
+
+          <button
+            onClick={() => router.back()}
+            className="absolute top-5 left-5 w-10 h-10 bg-white text-white rounded-full flex items-center justify-center hover:bg-gray-100"
+          >
+            <IoIosArrowBack className="fill-[#00AE4F]" size={30} />
+          </button>
         </div>
         <div className="mt-6 flex flex-col items-start px-6">
           <h1 className="text-2xl font-bold">{props.detail.chainName}</h1>

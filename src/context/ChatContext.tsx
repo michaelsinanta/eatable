@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
 import useIsRendered from "@/hooks/useIsRendered";
 import { useSession } from "next-auth/react";
-import { 
+import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
@@ -12,20 +12,19 @@ import {
   useState,
 } from "react";
 
-type IChatHistory = any[]
+type IChatHistory = any[];
 
 interface IChatContext {
-  chatHistory?: IChatHistory,
-  setChatHistory?: Dispatch<SetStateAction<IChatHistory>>,
+  chatHistory?: IChatHistory;
+  setChatHistory?: Dispatch<SetStateAction<IChatHistory>>;
 }
 
 const ChatContext = createContext<IChatContext | undefined>(undefined);
 
 export function ChatContextProvider({ children }: PropsWithChildren) {
   const isRendered = useIsRendered();
-  const [chatHistory, setChatHistory] = useState<IChatHistory>([
-  ]);
-  
+  const [chatHistory, setChatHistory] = useState<IChatHistory>([]);
+
   const contextValues = useMemo(
     () => ({
       ...(isRendered && {
@@ -33,11 +32,7 @@ export function ChatContextProvider({ children }: PropsWithChildren) {
         setChatHistory,
       }),
     }),
-    [
-      isRendered,
-      chatHistory,
-      setChatHistory,
-    ]
+    [isRendered, chatHistory, setChatHistory],
   );
 
   return (
