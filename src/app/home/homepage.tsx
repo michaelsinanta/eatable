@@ -89,11 +89,11 @@ const Header = () => {
           try {
             const { latitude, longitude } = position.coords;
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
             );
             const data = await response.json();
             setAddress(
-              `${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`
+              `${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`,
             );
           } catch (err) {
             console.log("Failed to fetch address");
@@ -103,7 +103,7 @@ const Header = () => {
         (err) => {
           console.log("Failed to get location: " + err.message);
           setAddress("South Quarter, Jakarta, Indonesia");
-        }
+        },
       );
     } else {
       console.log("Geolocation is not supported by your browser");
@@ -335,7 +335,7 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTyping(false);
-    }, 3000); // Adjust the duration as needed
+    }, 5000); // Adjust the duration as needed
 
     return () => clearTimeout(timer);
   }, [chatHistory]);
@@ -343,13 +343,13 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => {
   return (
     <>
       <div className="fixed inset-0 bg-black opacity-75 z-10"></div>
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white p-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white px-4 pb-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto overflow-y-scroll max-h-[85vh]">
+        <div className="sticky top-0 bg-white px-2 py-4 z-30">
           <button className="text-[#00AE4F]" onClick={toggleChat}>
             Back
           </button>
         </div>
-        <div className="gap-y-4 pt-5 overflow-y-scroll h-fit max-h-[70dvh] flex flex-col-reverse px-4">
+        <div className="gap-y-4 pt-5 flex flex-col-reverse px-4">
           {chatHistory ? (
             chatHistory.map((item, idx) =>
               !item.data ? (
@@ -424,7 +424,7 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => {
                     </Link>
                   ))}
                 </div>
-              )
+              ),
             )
           ) : (
             <p>Whoops! Something went wrong</p>
@@ -452,7 +452,7 @@ const ChatMessage = ({ avatar, message, button, className, source }: any) => {
     >
       {avatar && (
         <div className="flex-shrink-0">
-          <div className="w-16 h-16 border-2 border-[#00AE4F] flex items-center justify-center">
+          <div className="w-16 h-16 border-2 border-[#00AE4F] flex items-center justify-center rounded-xl">
             <Image
               width={200}
               height={200}
@@ -481,11 +481,22 @@ const ChatMessage = ({ avatar, message, button, className, source }: any) => {
   );
 };
 
-const ChatInput = ({ setIsTyping }: any) => {
-  const { chatHistory, setChatHistory } = useChatContext() || {};
-  const session = useSession();
+const recommendationPrompts = [
+  "Recommend me some places that are safe for me to eat",
+  "Give me something spicy",
+  "I want to order some desserts",
+];
 
-  function submitChatInput(prompt: string) {
+const ChatInput = ({
+  setIsTyping,
+}: {
+  setIsTyping: (isTyping: boolean) => void;
+}) => {
+  const { setChatHistory } = useChatContext() || {};
+  const session = useSession();
+  const [prompt, setPrompt] = useState<string>("");
+
+  const submitChatInput = async (prompt: string) => {
     // user msg
     setChatHistory &&
       setChatHistory((prev) => {
@@ -539,7 +550,7 @@ const ChatInput = ({ setIsTyping }: any) => {
                   source: "bot",
                   data: res.destinationCited.slice(
                     0,
-                    Math.min(res.destinationCited.length, 5)
+                    Math.min(res.destinationCited.length, 5),
                   ),
                 },
               ];
@@ -547,7 +558,10 @@ const ChatInput = ({ setIsTyping }: any) => {
             return [
               {
                 source: "bot",
-                data: res.destinationCited,
+                data: res.destinationCited.slice(
+                  0,
+                  Math.min(res.destinationCited.length, 5),
+                ),
               },
               ...prev,
             ];
@@ -559,11 +573,27 @@ const ChatInput = ({ setIsTyping }: any) => {
         console.log("Error:", err);
         setIsTyping(false);
       });
-  }
+  };
 
-  const [prompt, setPrompt] = useState<string>("");
+  const handlePromptClick = (recPrompt: string) => {
+    setPrompt(recPrompt);
+    submitChatInput(recPrompt);
+    setPrompt("");
+  };
+
   return (
-    <div className="flex mt-4">
+    <div className="flex flex-col mt-4">
+      <div className="mb-2">
+        {recommendationPrompts.map((recPrompt, index) => (
+          <button
+            key={index}
+            onClick={() => handlePromptClick(recPrompt)}
+            className="block w-full text-left px-4 py-2 mb-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            {recPrompt}
+          </button>
+        ))}
+      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
