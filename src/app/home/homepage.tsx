@@ -72,7 +72,7 @@ export default function Homepage(props: MerchantPageProps) {
 
       <MainContent toggleChat={toggleChat} />
       <Recommendations detail={props.detail} />
-      <h2 className="text-lg font-semibold mb-2 ml-5">Near You</h2>
+      <h2 className="text-lg font-semibold mb-2 mt-2 ml-5">Near You</h2>
       <MerchantList
         detail={props.merchants.slice(0, Math.min(props.merchants.length, 7))}
       />
@@ -90,13 +90,13 @@ const Header = () => {
           try {
             const { latitude, longitude } = position.coords;
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
             );
             const data = await response.json();
             // console.log("addr", data)
             // setAddress(data.display_name);
             setAddress(
-              `${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`,
+              `${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`
             );
           } catch (err) {
             console.log("Failed to fetch address");
@@ -106,7 +106,7 @@ const Header = () => {
         (err) => {
           console.log("Failed to get location: " + err.message);
           setAddress("South Quarter, Jakarta, Indonesia");
-        },
+        }
       );
     } else {
       console.log("Geolocation is not supported by your browser");
@@ -249,64 +249,88 @@ const FoodOptions = () => (
   </div>
 );
 
-const Recommendations = ({ detail }: { detail: any[] }) => (
-  <>
-    <h2 className="text-lg font-semibold mb-4 ml-5">Recommended For You</h2>
-    <div className="flex overflow-x-auto no-scrollbar ml-5">
-      {detail.map((merchant, index) => (
-        <div
-          key={merchant.id}
-          className="flex flex-col items-start gap-x-2 cursor-pointer w-[300px]"
-        >
-          <div className="relative w-40 h-40 bg-gray-300 rounded-lg overflow-hidden mr-4">
-            <Image
-              src={merchant.merchantBrief.photoHref}
-              alt="Restaurant"
-              width={128}
-              height={128}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
-              <FaStar />
-              <p className="my-auto">
-                {merchant.merchantBrief.rating} (
-                {merchant.merchantBrief.vote_count})
-              </p>
+const Recommendations = ({ detail }: { detail: any[] }) => {
+  // Fungsi untuk mengacak array
+  const shuffleArray = (array: any[]) => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
+  // Mengacak array dan mengambil 15 item pertama
+  const randomMerchants = shuffleArray(detail).slice(0, 15);
+
+  return (
+    <>
+      <h2 className="text-lg font-semibold ml-5 mb-3">Recommended For You</h2>
+      <div className="flex overflow-x-auto no-scrollbar ml-5">
+        {randomMerchants.map((merchant, index) => (
+          <div
+            key={merchant.id}
+            className="flex flex-col items-start gap-x-2 cursor-pointer w-[300px]"
+          >
+            <div className="relative w-40 h-40 bg-gray-300 rounded-lg overflow-hidden mr-4">
+              <Image
+                src={merchant.merchantBrief.photoHref}
+                alt="Restaurant"
+                width={128}
+                height={128}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
+                <FaStar />
+                <p className="my-auto">
+                  {merchant.merchantBrief.rating} (
+                  {merchant.merchantBrief.vote_count})
+                </p>
+              </div>
+            </div>
+            <div className="flex-1 p-1 h-fit">
+              <div className="flex justify-between items-center">
+                <h3 className="text-md font-semibold">{merchant.chainName}</h3>
+              </div>
+              <div className="text-sm flex flex-row gap-3 text-gray-500">
+                <p>
+                  <span className="font-semibold">$</span>$$$
+                </p>
+                {/* <p className="whitespace-nowrap">
+                    {distances[index] ? `${distances[index].distance} km` : "..."}
+                  </p>
+                  <p>
+                    {distances[index]
+                      ? `Delivery in ${distances[index].time} min`
+                      : "..."}
+                  </p> */}
+              </div>
+              <div className="flex flex-wrap gap-2 my-4">
+                {merchant.tags.length > 1 ? (
+                  <>
+                    <span
+                      key={0}
+                      className="bg-green-200 text-black text-xs py-1 px-2 rounded-full whitespace-nowrap text-center w-fit"
+                    >
+                      {merchant.tags[0]}
+                    </span>
+                    <span className="bg-gray-200 text-black text-xs py-1 px-2 rounded-full whitespace-nowrap text-center w-fit">
+                      +{merchant.tags.length - 1} more
+                    </span>
+                  </>
+                ) : (
+                  merchant.tags.map((tag: any, tagIndex: any) => (
+                    <span
+                      key={tagIndex}
+                      className="bg-green-200 text-black text-xs py-1 px-2 rounded-full whitespace-nowrap text-center w-fit"
+                    >
+                      {tag}
+                    </span>
+                  ))
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex-1 p-1 h-fit">
-            <div className="flex justify-between items-center">
-              <h3 className="text-md font-semibold">{merchant.chainName}</h3>
-            </div>
-            <div className="text-sm flex flex-row gap-3 text-gray-500">
-              <p>
-                <span className="font-semibold">$</span>$$$
-              </p>
-              {/* <p className="whitespace-nowrap">
-                {distances[index] ? `${distances[index].distance} km` : "..."}
-              </p>
-              <p>
-                {distances[index]
-                  ? `Delivery in ${distances[index].time} min`
-                  : "..."}
-              </p> */}
-            </div>
-            <div className="flex flex-wrap gap-2 my-4">
-              {merchant.tags.map((tag: any, tagIndex: any) => (
-                <span
-                  key={tagIndex}
-                  className="bg-green-200 text-black text-xs py-1 px-2 rounded-full whitespace-nowrap text-center w-fit"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </>
-);
+        ))}
+      </div>
+    </>
+  );
+};
 
 type ChatType = {
   toggleChat: any;
@@ -398,7 +422,7 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
                   </Link>
                 ))}
               </div>
-            ),
+            )
           )
         ) : (
           <p>Whoops! Something went wrong</p>
@@ -507,7 +531,7 @@ const ChatInput = () => {
                   source: "bot",
                   data: res.destinationCited.slice(
                     0,
-                    Math.min(res.destinationCited.length, 5),
+                    Math.min(res.destinationCited.length, 5)
                   ),
                 },
               ];
