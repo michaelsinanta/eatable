@@ -16,7 +16,6 @@ import MerchantList from "../(authenticated)/merchant/components/MerchantList";
 
 interface MerchantPageProps {
   detail: any;
-  //   user: DefaultUser & { tags?: string[] };
   merchants: any;
 }
 
@@ -93,8 +92,6 @@ const Header = () => {
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
             );
             const data = await response.json();
-            // console.log("addr", data)
-            // setAddress(data.display_name);
             setAddress(
               `${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`
             );
@@ -203,7 +200,7 @@ const foodImages = [
     category: "Chicken",
   },
   {
-    url: "/assets/pasta.jpeg", // the sndimg.com image wont load, gue dl aja
+    url: "/assets/pasta.jpeg",
     category: "Pasta",
   },
   {
@@ -294,14 +291,6 @@ const Recommendations = ({ detail }: { detail: any[] }) => {
                 <p>
                   <span className="font-semibold">$</span>$$$
                 </p>
-                {/* <p className="whitespace-nowrap">
-                    {distances[index] ? `${distances[index].distance} km` : "..."}
-                  </p>
-                  <p>
-                    {distances[index]
-                      ? `Delivery in ${distances[index].time} min`
-                      : "..."}
-                  </p> */}
               </div>
               <div className="flex flex-wrap gap-2 my-4">
                 {merchant.tags.length > 1 ? (
@@ -340,101 +329,119 @@ type ChatType = {
   chatHistory?: any[];
 };
 
-const Chat = ({ toggleChat, chatHistory }: ChatType) => (
-  <>
-    <div className="fixed inset-0 bg-black opacity-75 z-10"></div>
-    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white p-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        {/* <span className="text-lg font-bold">Eeta Bot</span> */}
-        <button className="text-[#00AE4F]" onClick={toggleChat}>
-          Back
-        </button>
-      </div>
-      <div className="gap-y-4 pt-5 overflow-y-scroll h-fit max-h-[70dvh] flex flex-col-reverse px-4">
-        {chatHistory ? (
-          chatHistory.map((item, idx) =>
-            !item.data ? (
-              <ChatMessage
-                source={item.source}
-                key={idx}
-                avatar={
-                  item.source === "bot" && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                  )
-                }
-                message={item.message}
-                className={item.source === "bot" ? "text-start" : "text-end"}
-              />
-            ) : (
-              <div key={idx} className="flex flex-col gap-2">
-                {item.data.map((dest: any, i: number) => (
-                  <Link key={i} href={`/merchant/${dest.id}`}>
-                    <div className="relative border border-gray-300 rounded-md cursor-pointer">
-                      <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
-                        <FaStar />
-                        <p className="my-auto">
-                          {dest.merchantBrief.rating} (
-                          {dest.merchantBrief.vote_count})
-                        </p>
-                      </div>
-                      <Image
-                        src={dest.merchantBrief.photoHref}
-                        alt={"Merchant picture"}
-                        width={200}
-                        height={100}
-                        className="w-full object-cover rounded-t-md max-h-[150px]"
-                      />
-                      <div className="px-6 py-4 mb-2 h-full">
-                        <h3 className="font-semibold text-xl">
-                          {dest.chainName}
-                        </h3>
-                        <p>{dest.merchantBrief.description}</p>
-                        <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {dest.tags.map((cuisineItem: string, j: number) => (
-                            <>
-                              <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">
-                                {cuisineItem}
-                              </span>
-                            </>
-                          ))}
-                          {!dest.tags ||
-                            (dest.tags.length === 0 && (
+const Chat = ({ toggleChat, chatHistory }: ChatType) => {
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTyping(false);
+    }, 3000); // Adjust the duration as needed
+
+    return () => clearTimeout(timer);
+  }, [chatHistory]);
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black opacity-75 z-10"></div>
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white p-4 rounded-t-2xl shadow-lg z-20 md:max-w-md md:mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <button className="text-[#00AE4F]" onClick={toggleChat}>
+            Back
+          </button>
+        </div>
+        <div className="gap-y-4 pt-5 overflow-y-scroll h-fit max-h-[70dvh] flex flex-col-reverse px-4">
+          {chatHistory ? (
+            chatHistory.map((item, idx) =>
+              !item.data ? (
+                <ChatMessage
+                  source={item.source}
+                  key={idx}
+                  avatar={
+                    item.source === "bot" && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 11c0 1.104-.895 2-2 2s-2-.896-2-2m4-1h6M4 11v2m2-2a2 2 0 11-2 2m0 0a2 2 0 012 2m4-2v6m-4 2h6a2 2 0 002-2V5a 2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                    )
+                  }
+                  message={item.message}
+                  className={item.source === "bot" ? "text-start" : "text-end"}
+                />
+              ) : (
+                <div key={idx} className="flex flex-col gap-2">
+                  {item.data.map((dest: any, i: number) => (
+                    <Link key={i} href={`/merchant/${dest.id}`}>
+                      <div className="relative border border-gray-300 rounded-md cursor-pointer">
+                        <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
+                          <FaStar />
+                          <p className="my-auto">
+                            {dest.merchantBrief.rating} (
+                            {dest.merchantBrief.vote_count})
+                          </p>
+                        </div>
+                        <Image
+                          src={dest.merchantBrief.photoHref}
+                          alt={"Merchant picture"}
+                          width={200}
+                          height={100}
+                          className="w-full object-cover rounded-t-md max-h-[150px]"
+                        />
+                        <div className="px-6 py-4 mb-2 h-full">
+                          <h3 className="font-semibold text-xl">
+                            {dest.chainName}
+                          </h3>
+                          <p>{dest.merchantBrief.description}</p>
+                          <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {dest.tags.map((cuisineItem: string, j: number) => (
                               <>
-                                <span className="bg-red-100 rounded-full px-3 w-fit text-sm">
-                                  No Tags
+                                <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">
+                                  {cuisineItem}
                                 </span>
                               </>
                             ))}
+                            {!dest.tags ||
+                              (dest.tags.length === 0 && (
+                                <>
+                                  <span className="bg-red-100 rounded-full px-3 w-fit text-sm">
+                                    No Tags
+                                  </span>
+                                </>
+                              ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+              )
             )
-          )
-        ) : (
-          <p>Whoops! Something went wrong</p>
+          ) : (
+            <p>Whoops! Something went wrong</p>
+          )}
+        </div>
+        {isTyping && (
+          <div className="type-indicator flex items-center justify-center">
+            <span className="animate-bounce text-2xl">.</span>
+            <span className="animate-bounce text-2xl">.</span>
+            <span className="animate-bounce text-2xl">.</span>
+          </div>
         )}
+        <ChatInput setIsTyping={setIsTyping} />
       </div>
-      <ChatInput />
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 const ChatMessage = ({ avatar, message, button, className, source }: any) => {
   return (
@@ -474,7 +481,7 @@ const ChatMessage = ({ avatar, message, button, className, source }: any) => {
   );
 };
 
-const ChatInput = () => {
+const ChatInput = ({ setIsTyping }: any) => {
   const { chatHistory, setChatHistory } = useChatContext() || {};
   const session = useSession();
 
@@ -499,12 +506,11 @@ const ChatInput = () => {
         ];
       });
 
+    setIsTyping(true);
+
     const resp = sendToCohere(prompt, (session.data?.user as any)?.tags);
     resp
       .then((res) => {
-        // alert("success");
-        // console.log(res);
-        // bot msg
         setChatHistory &&
           setChatHistory((prev) => {
             if (!prev) {
@@ -524,7 +530,6 @@ const ChatInput = () => {
             ];
           });
 
-        // destinations cited
         setChatHistory &&
           res.destinationCited &&
           setChatHistory((prev) => {
@@ -547,9 +552,12 @@ const ChatInput = () => {
               ...prev,
             ];
           });
+
+        setIsTyping(false);
       })
       .catch((err) => {
-        console.log("awooga err", err);
+        console.log("Error:", err);
+        setIsTyping(false);
       });
   }
 
