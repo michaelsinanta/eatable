@@ -291,7 +291,7 @@ const Recommendations = ({ detail }: { detail: any[] }) => (
                   : "..."}
               </p> */}
             </div>
-            <div className="flex flex-wrap gap-2 my-4">
+            <div className="flex flex-wrap gap-2 mt-4">
               {merchant.tags.map((tag: any, tagIndex: any) => (
                 <span
                   key={tagIndex}
