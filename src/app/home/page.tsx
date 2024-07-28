@@ -6,9 +6,17 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import Homepage from "./homepage";
 
 export default async function Page({}: {}) {
-  //   const session = (await getServerSession(authOptions)) as {
-  //     user?: DefaultUser & { tags: string[] };
-  //   } | null;
+  const session = (await getServerSession(authOptions)) as {
+    user?: DefaultUser & { tags: string[] };
+  } | null;
+
+  const merchantData = await getAllMerchants();
+
+  if (!merchantData.success || !merchantData.data) {
+    notFound();
+  }
+
+  const merchantDetail = merchantData.data;
 
   const data = await getAllMerchants();
 
@@ -18,5 +26,5 @@ export default async function Page({}: {}) {
 
   const detail = data.data;
 
-  return <Homepage detail={detail} />;
+  return <Homepage detail={detail} merchants={merchantDetail} />;
 }
