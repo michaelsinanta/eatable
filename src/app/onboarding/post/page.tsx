@@ -12,10 +12,10 @@ const IntroducingEeta = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center overflow-y-hidden">
       <div className="w-full max-w-md bg-white">
         <div className="bg-gradient-to-r from-blue-500 to-green-500 py-16 rounded-b-3xl flex items-center justify-center">
-          <div className="w-32 h-32 rounded-full flex items-center justify-center">
+          <div className="w-32 h-28 rounded-full flex items-center justify-center">
             <Image
               width={400}
               height={400}
@@ -25,7 +25,7 @@ const IntroducingEeta = () => {
             />
           </div>
         </div>
-        <div className="mt-6 flex flex-col items-center px-12">
+        <div className="-mt-6 flex flex-col items-center px-6">
           <div className="bg-gray-200 flex flex-row gap-2 items-center text-gray-700 font-semibold my-3 text-md px-4 py-2 rounded-full mb-6">
             <BsStars />
             <p>New</p>
@@ -33,7 +33,7 @@ const IntroducingEeta = () => {
           <h1 className="text-2xl font-bold mb-2 tracking-wide">
             Introducing Eeta
           </h1>
-          <p className="text-gray-600 text-center mb-6">
+          <p className="text-gray-600 text-center mb-4">
             With Eeta, your food hypersensitivity is no longer a barrier in
             ordering food.
           </p>
@@ -49,7 +49,7 @@ const IntroducingEeta = () => {
               </p>
             </div>
           </div>
-          <div className="w-full bg-white flex-shrink-0 h-12 mt-4">
+          <div className="w-full bg-white flex-shrink-0 mt-2">
             <button
               onClick={handleNext}
               className="w-full justify-center rounded-lg bg-[#00AE4F] px-5 py-3 text-center text-lg font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800"

@@ -13,7 +13,7 @@ import { BsStars } from "react-icons/bs";
 import MenuItemCard from "./MenuItemCard";
 import { IoIosArrowBack } from "react-icons/io";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 interface MerchantDetailPageProps {
   detail: any;
   user: DefaultUser & { tags?: string[] };
@@ -23,6 +23,7 @@ interface MerchantDetailPageProps {
 export function MerchantDetailPage(props: MerchantDetailPageProps) {
   const [distance, setDistance] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -60,15 +61,17 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
             src={props.detail.merchantBrief?.photoHref ?? "/default-image.jpg"}
             alt="Eeta Logo"
           />
-          <Link href={"/merchant"}>
-            <button className="absolute top-5 left-5 w-10 h-10 bg-white text-white rounded-full flex items-center justify-center hover:bg-gray-100">
-              <IoIosArrowBack className="fill-[#00AE4F]" size={30} />
-            </button>
-          </Link>
+
+          <button
+            onClick={() => router.back()}
+            className="absolute top-5 left-5 w-10 h-10 bg-white text-white rounded-full flex items-center justify-center hover:bg-gray-100"
+          >
+            <IoIosArrowBack className="fill-[#00AE4F]" size={30} />
+          </button>
         </div>
         <div className="mt-6 flex flex-col items-start px-6">
           <h1 className="text-2xl font-bold">{props.detail.chainName}</h1>
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full mb-2">
             <p className="text-muted-foreground">
               {props.detail?.address?.name}
             </p>
@@ -81,27 +84,24 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
               See on maps
             </a>
           </div>
-          <div className="flex space-x-4 items-center text-sm">
-            <div className="flex flex-col space-y-2">
+          <div className="flex items-center text-sm">
+            <div className="flex flex-col space-y-1">
               <p className="font-bold">{props.detail.merchantBrief?.rating}</p>
               <p>{formatVoteCount(props.detail.merchantBrief?.vote_count)}</p>
             </div>
-            <div className="w-0.5 h-16 bg-slate-300 rounded-xl items-center"></div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
               <p className="font-bold">
                 {props.detail.merchantBrief?.cuisine.length}
               </p>
               <p>Menu Variants</p>
             </div>
-            <div className="w-0.5 h-16 bg-slate-300 rounded-xl items-center"></div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
               <p className="font-bold">
                 {formatPrice(props.detail?.estimatedDeliveryFee?.price)}
               </p>
               <p>Estimated Delivery Fee</p>
             </div>
-            <div className="w-0.5 h-16 bg-slate-300 rounded-xl items-center"></div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
               <p className="font-bold">
                 {props.detail.merchantBrief?.openHours?.displayedHours}
               </p>

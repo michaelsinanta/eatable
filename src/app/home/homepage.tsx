@@ -73,7 +73,9 @@ export default function Homepage(props: MerchantPageProps) {
       <MainContent toggleChat={toggleChat} />
       <Recommendations detail={props.detail} />
       <h2 className="text-lg font-semibold mb-2 ml-5">Near You</h2>
-      <MerchantList detail={props.merchants.slice(0, Math.min(props.merchants.length, 7))} />
+      <MerchantList
+        detail={props.merchants.slice(0, Math.min(props.merchants.length, 7))}
+      />
       {chatOpen && <Chat toggleChat={toggleChat} chatHistory={chatHistory} />}
     </div>
   );
@@ -88,12 +90,14 @@ const Header = () => {
           try {
             const { latitude, longitude } = position.coords;
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
             );
             const data = await response.json();
             // console.log("addr", data)
             // setAddress(data.display_name);
-            setAddress(`${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`)
+            setAddress(
+              `${data.address.road}, ${data.address.commercial}, ${data.address.city}, ${data.address.country} ${data.address.postcode}`,
+            );
           } catch (err) {
             console.log("Failed to fetch address");
             setAddress("South Quarter, Jakarta, Indonesia");
@@ -102,7 +106,7 @@ const Header = () => {
         (err) => {
           console.log("Failed to get location: " + err.message);
           setAddress("South Quarter, Jakarta, Indonesia");
-        }
+        },
       );
     } else {
       console.log("Geolocation is not supported by your browser");
@@ -151,20 +155,20 @@ const Header = () => {
       </div>
     </div>
   );
-}
+};
 
 const ChatBubble = () => {
   return (
     <div className="flex items-center px-4 mt-16 h-full">
-        <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center mb-auto">
-          <Image
-            width={200}
-            height={200}
-            src="/images/green-chatbot.svg"
-            alt="Eeta Logo"
-            className="w-12 h-12 p-1"
-          />
-        </div>
+      <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center mb-auto">
+        <Image
+          width={200}
+          height={200}
+          src="/images/green-chatbot.svg"
+          alt="Eeta Logo"
+          className="w-12 h-12 p-1"
+        />
+      </div>
       <div className="ml-3 w-2/3">
         <div className="border-[#00AE4F] border-2 text-[#006A2F] mb-3 p-3 max-w-xs rounded-r-xl rounded-b-xl">
           Hi! What do you want to eat today?
@@ -237,7 +241,9 @@ const FoodOptions = () => (
           />
         </div>
 
-        <h1 className="text-black text-center mt-2 font-light text-sm w-full">{food.category}</h1>
+        <h1 className="text-black text-center mt-2 font-light text-sm w-full">
+          {food.category}
+        </h1>
       </div>
     ))}
   </div>
@@ -357,33 +363,42 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
                           {dest.merchantBrief.vote_count})
                         </p>
                       </div>
-                      <Image 
-                        src={dest.merchantBrief.photoHref} 
-                        alt={"Merchant picture"} 
+                      <Image
+                        src={dest.merchantBrief.photoHref}
+                        alt={"Merchant picture"}
                         width={200}
                         height={100}
                         className="w-full object-cover rounded-t-md max-h-[150px]"
                       />
                       <div className="px-6 py-4 mb-2 h-full">
-                        <h3 className="font-semibold text-xl">{dest.chainName}</h3>
+                        <h3 className="font-semibold text-xl">
+                          {dest.chainName}
+                        </h3>
                         <p>{dest.merchantBrief.description}</p>
                         <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {dest.tags.map((cuisineItem: string, j: number) => (
                             <>
-                              <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">{cuisineItem}</span>
+                              <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">
+                                {cuisineItem}
+                              </span>
                             </>
                           ))}
-                          {!dest.tags || dest.tags.length === 0 && <>
-                            <span className="bg-red-100 rounded-full px-3 w-fit text-sm">No Tags</span>
-                          </>}
+                          {!dest.tags ||
+                            (dest.tags.length === 0 && (
+                              <>
+                                <span className="bg-red-100 rounded-full px-3 w-fit text-sm">
+                                  No Tags
+                                </span>
+                              </>
+                            ))}
                         </div>
                       </div>
                     </div>
                   </Link>
                 ))}
               </div>
-            )
+            ),
           )
         ) : (
           <p>Whoops! Something went wrong</p>
@@ -492,7 +507,7 @@ const ChatInput = () => {
                   source: "bot",
                   data: res.destinationCited.slice(
                     0,
-                    Math.min(res.destinationCited.length, 5)
+                    Math.min(res.destinationCited.length, 5),
                   ),
                 },
               ];
