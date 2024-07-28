@@ -11,10 +11,13 @@ import { DefaultUser, Session } from "next-auth";
 import { IoSend } from "react-icons/io5";
 import { getAllMerchants } from "../(authenticated)/merchant/[id]/actions/merchant.action";
 import { FaStar } from "react-icons/fa";
+import Link from "next/link";
+import MerchantList from "../(authenticated)/merchant/components/MerchantList";
 
 interface MerchantPageProps {
   detail: any;
   //   user: DefaultUser & { tags?: string[] };
+  merchants: any;
 }
 
 export default function Homepage(props: MerchantPageProps) {
@@ -69,6 +72,8 @@ export default function Homepage(props: MerchantPageProps) {
 
       <MainContent toggleChat={toggleChat} />
       <Recommendations detail={props.detail} />
+      <h2 className="text-lg font-semibold mb-2 ml-5">Near You</h2>
+      <MerchantList detail={props.merchants.slice(0, Math.min(props.merchants.length, 7))} />
       {chatOpen && <Chat toggleChat={toggleChat} chatHistory={chatHistory} />}
     </div>
   );
@@ -240,12 +245,12 @@ const FoodOptions = () => (
 
 const Recommendations = ({ detail }: { detail: any[] }) => (
   <>
-    <h2 className="text-2xl font-semibold mb-4 ml-5">Recommended For You</h2>
-    <div className="flex space-x-4 overflow-x-auto no-scrollbar">
+    <h2 className="text-lg font-semibold mb-4 ml-5">Recommended For You</h2>
+    <div className="flex overflow-x-auto no-scrollbar ml-5">
       {detail.map((merchant, index) => (
         <div
           key={merchant.id}
-          className="flex flex-col ml-5 items-start mb-4 p-1 cursor-pointer"
+          className="flex flex-col items-start gap-x-2 cursor-pointer w-[300px]"
         >
           <div className="relative w-40 h-40 bg-gray-300 rounded-lg overflow-hidden mr-4">
             <Image
@@ -263,7 +268,7 @@ const Recommendations = ({ detail }: { detail: any[] }) => (
               </p>
             </div>
           </div>
-          <div className="flex-1 p-1">
+          <div className="flex-1 p-1 h-fit">
             <div className="flex justify-between items-center">
               <h3 className="text-md font-semibold">{merchant.chainName}</h3>
             </div>
@@ -343,80 +348,39 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
             ) : (
               <div key={idx} className="flex flex-col gap-2">
                 {item.data.map((dest: any, i: number) => (
-                  <div key={i} className="relative border border-gray-300 rounded-md">
-                    <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
-                      <FaStar />
-                      <p className="my-auto">
-                        {dest.merchantBrief.rating} (
-                        {dest.merchantBrief.vote_count})
-                      </p>
-                    </div>
-                    <Image 
-                      src={dest.merchantBrief.photoHref} 
-                      alt={"Merchant picture"} 
-                      width={200}
-                      height={100}
-                      className="w-full object-cover rounded-t-md max-h-[150px]"
-                    />
-                    <div className="px-6 py-4 mb-2 h-full">
-                      <h3 className="font-semibold text-xl">{dest.chainName}</h3>
-                      <p>{dest.merchantBrief.description}</p>
-                      <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {dest.tags.map((cuisineItem: string, j: number) => (
-                          <>
-                            <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">{cuisineItem}</span>
-                          </>
-                        ))}
-                        {!dest.tags || dest.tags.length === 0 && <>
-                          <span className="bg-red-100 rounded-full px-3 w-fit text-sm">No Tags</span>
-                        </>}
-                      </div>
-                    </div>
-                    {/* <div className="max-w-sm rounded overflow-hidden shadow-lg border border-[#00AE4F] p-4 bg-green-100">
-                      <div className="px-6 py-4">
-                        <div className="font-bold text-xl mb-2">
-                          {dest.chainName}
-                        </div>
-                        <p className="text-gray-700 text-base mb-4">
-                          <span className="inline-block align-middle mr-2">
-                            <svg
-                              className="w-4 h-4 fill-current text-gray-700"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M12 2C8.1 2 5 5.1 5 9c0 6.4 7 13 7 13s7-6.6 7-13c0-3.9-3.1-7-7-7zm0 9.9c-1.5 0-2.9-1.2-2.9-2.9S10.5 6.1 12 6.1s2.9 1.2 2.9 2.9-1.4 2.9-2.9 2.9z" />
-                            </svg>
-                          </span>
-                          {dest.addressId}
+                  <Link key={i} href={`/merchant/${dest.id}`}>
+                    <div className="relative border border-gray-300 rounded-md cursor-pointer">
+                      <div className="absolute top-0 left-0 bg-[#00AE4F] text-white text-xs font-semibold px-2 py-1 rounded-br-lg flex flex-row gap-1 items-center">
+                        <FaStar />
+                        <p className="my-auto">
+                          {dest.merchantBrief.rating} (
+                          {dest.merchantBrief.vote_count})
                         </p>
-                        <div className="mb-4">
-                          {dest.tags.map((tag, index) => (
-                            <div key={index} className="mb-2">
-                              <div
-                                className={`inline-flex items-center bg-[#00AE4F] text-white rounded-full px-3 py-1 font-semibold text-sm mr-2`}
-                              >
-                                <svg
-                                  className="w-4 h-4 mr-1"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="currentColor"
-                                >
-                                  <path d="M10.293 14.707l-4.293-4.293 1.414-1.414 2.879 2.879 7.293-7.293 1.414 1.414-8.707 8.707z" />
-                                </svg>
-                                {tag}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <button className="bg-white border border-[#00AE4F] text-[#00AE4F] hover:bg-[#00AE4F] hover:text-white font-semibold py-2 px-4 rounded-full">
-                          View More
-                        </button>
                       </div>
-                    </div> */}
-                    {/* <h3 className="font-bold">{dest.chainName}</h3>
-                    <p>{dest.tags}</p> */}
-                  </div>
+                      <Image 
+                        src={dest.merchantBrief.photoHref} 
+                        alt={"Merchant picture"} 
+                        width={200}
+                        height={100}
+                        className="w-full object-cover rounded-t-md max-h-[150px]"
+                      />
+                      <div className="px-6 py-4 mb-2 h-full">
+                        <h3 className="font-semibold text-xl">{dest.chainName}</h3>
+                        <p>{dest.merchantBrief.description}</p>
+                        <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {dest.tags.map((cuisineItem: string, j: number) => (
+                            <>
+                              <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">{cuisineItem}</span>
+                            </>
+                          ))}
+                          {!dest.tags || dest.tags.length === 0 && <>
+                            <span className="bg-red-100 rounded-full px-3 w-fit text-sm">No Tags</span>
+                          </>}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )

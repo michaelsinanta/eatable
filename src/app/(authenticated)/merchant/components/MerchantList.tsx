@@ -59,12 +59,12 @@ export default function MerchantList({ detail }: { detail: any[] }) {
   };
 
   return (
-    <div className="px-2">
+    <div className="ml-4">
       {detail.map((merchant, index) => (
         <div
           key={merchant.id}
           onClick={() => handleNext(merchant.id)}
-          className="flex items-start mb-4 p-1 cursor-pointer hover:shadow-md hover:rounded-lg transition-shadow transition-transform duration-300 ease-in-out"
+          className="flex items-start mb-4 p-1 cursor-pointer hover:shadow-md hover:rounded-lg transition-transform duration-300 ease-in-out"
         >
           <div className="relative w-40 h-40 bg-gray-300 rounded-lg overflow-hidden mr-4">
             <Image
