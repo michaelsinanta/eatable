@@ -14,6 +14,9 @@ import MenuItemCard from "./MenuItemCard";
 import { IoIosArrowBack } from "react-icons/io";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import sendToCohere, { sendToCohereMerchant } from "@/app/home/actions/rag";
+import { tags } from '../../../../../constant/tags';
+import { Spinner } from "flowbite-react";
 interface MerchantDetailPageProps {
   detail: any;
   user: DefaultUser & { tags?: string[] };
@@ -23,7 +26,38 @@ interface MerchantDetailPageProps {
 export function MerchantDetailPage(props: MerchantDetailPageProps) {
   const [distance, setDistance] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const [magicMsg, setMagicMsg] = useState<string>("");
+
+  function askEeta(e: any) {
+    e.preventDefault();
+    const menu = props.menu.merchant.menu
+    const newMenu = Object.values(menu.categories).flatMap(category => (category as any).items)
+    console.log("menuu", newMenu)
+    console.log("tags", props.user.tags)
+    setLoading(true)
+    const resp = sendToCohereMerchant(
+      props.detail.chainName, 
+      props.user.tags!, 
+      newMenu.slice(0, Math.min(newMenu.length, 25)).map(item => ({
+        available: String(item.available) ?? "Not Available",
+        description: item.description ?? '',
+        name: item.name ?? '',
+      })),
+    )
+    resp
+      .then((res) => {
+        setLoading(false)
+        // alert("success");
+        console.log(res);
+        setMagicMsg(res.text)
+      })
+      .catch((err) => {
+        setLoading(false)
+        console.log("awooga err", err);
+      });
+  }
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -71,20 +105,20 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
         </div>
         <div className="mt-6 flex flex-col items-start px-6">
           <h1 className="text-2xl font-bold">{props.detail.chainName}</h1>
-          <div className="flex justify-between w-full mb-2">
+          <div className="flex justify-between w-full text-sm">
             <p className="text-muted-foreground">
               {props.detail?.address?.name}
             </p>
-            <a
+            <Link
               className="text-[#00AE4F] cursor-pointer"
               href={`https://www.google.com/maps?q=${props.detail?.latlng?.latitude},${props.detail?.latlng?.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-            >
+              >
               See on maps
-            </a>
+            </Link>
           </div>
-          <div className="flex items-center text-sm">
+          <div className="flex items-center text-sm mt-4">
             <div className="flex flex-col space-y-1">
               <p className="font-bold">{props.detail.merchantBrief?.rating}</p>
               <p>{formatVoteCount(props.detail.merchantBrief?.vote_count)}</p>
@@ -110,30 +144,40 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
           </div>
         </div>
 
-        <div className="mt-2 flex flex-col items-start px-8 bg-gray-100 p-3 border border-1 border-gray-200">
-          <p className="font-bold">
-            {metersToKilometers(distance)}Km distance from you!
+        <div className="flex flex-col items-start my-4 pl-6 bg-gray-100 py-3 border border-1 border-gray-200 text-sm">
+          <p className="font-semibold">
+            {metersToKilometers(distance)} km distance from you!
           </p>
-          <p>Delivery in {metersToMinutes(distance)} min</p>
+          <p>Delivery in {metersToMinutes(distance)} minutes</p>
         </div>
 
-        <div className="flex w-full items-center justify-center mt-4">
-          <div className="flex items-center justify-center w-fit px-8 p-3 bg-[#00AE4F] border border-1 border-[#58BC6B] text-white font-bold space-x-4 rounded-lg">
-            <div className="flex flex-col space-y-2">
-              <div className="flex">
+        <div className="flex items-center justify-center mt-4 mx-auto w-[94%] text-sm">
+          <div className="flex items-center justify-center w-fit px-8 py-4 bg-[#00AE4F] border border-1 border-[#58BC6B] text-white font-bold space-x-4 rounded-lg">
+            <div className="flex flex-col gap-y-2 w-fit">
+              <div className="flex font-semibold items-center gap-1">
                 <BsStars /> <p>What menus are safe for me?</p>
               </div>
-              <div className="bg-white px-3 py-1 w-full justify-center items-center rounded-xl text-center cursor-pointer">
-                <p className="text-[#00AE4F]">Ask Eeta!</p>
-              </div>
+              { magicMsg ? 
+              <p className="font-light w-fit overflow-y-scroll no-scrollbar max-h-24">
+                {magicMsg}
+              </p>
+              : 
+                loading ? <Spinner className="mx-auto" />  :
+                <button 
+                  className="bg-white px-3 py-1 w-full justify-center items-center rounded-full text-center cursor-pointer"
+                  onClick={askEeta}
+                >
+                  <p className="text-[#00AE4F] font-semibold">Ask Eeta!</p>
+                </button>
+              }
             </div>
-            <div className="w-16 h-16 rounded-full flex items-center justify-center border-white bg-[#00AE4F] p-3">
+            <div className="w-28 h-28 rounded-full flex items-start justify-center mb-auto border-white">
               <Image
                 width={50}
                 height={50}
                 src="/images/chatbot.svg"
                 alt="Eeta Logo"
-                className="fill-[#00AE4F]"
+                className="fill-[#00AE4F] px-2 py-1 border-white rounded-lg w-full h-full"
               />
             </div>
           </div>
@@ -145,7 +189,7 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
               <div key={category.ID}>
                 <h3 className="text-lg font-semibold">{category.name}</h3>
                 <div className="grid grid-cols-2 gap-4 mt-2">
-                  {category.items.map((item: any) => (
+                  {category.items?.map((item: any) => (
                     <MenuItemCard key={item.ID} item={item} />
                   ))}
                 </div>
