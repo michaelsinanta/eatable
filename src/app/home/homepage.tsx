@@ -159,18 +159,18 @@ const Header = () => {
 
 const ChatBubble = () => {
   return (
-    <div className="flex items-center px-4 mt-16 h-full">
-      <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center mb-auto">
+    <div className="flex items-center w-full justify-center mt-12 mb-3 h-full">
+      <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center">
         <Image
-          width={200}
-          height={200}
+          width={100}
+          height={64}
           src="/images/green-chatbot.svg"
           alt="Eeta Logo"
           className="w-12 h-12 p-1"
         />
       </div>
-      <div className="ml-3 w-2/3">
-        <div className="border-[#00AE4F] border-2 text-[#006A2F] mb-3 p-3 max-w-xs rounded-r-xl rounded-b-xl">
+      <div className="ml-1 w-full p-3 max-w-xs">
+        <div className="border-[#00AE4F] border-2 text-[#006A2F] p-3 max-w-xs rounded-r-xl rounded-b-xl">
           Hi! What do you want to eat today?
         </div>
       </div>
@@ -418,7 +418,7 @@ const ChatMessage = ({ avatar, message, button, className, source }: any) => {
     >
       {avatar && (
         <div className="flex-shrink-0">
-          <div className="w-16 h-16 rounded-xl border-2 border-[#00AE4F] flex items-center justify-center">
+          <div className="w-16 h-16 border-2 border-[#00AE4F] flex items-center justify-center">
             <Image
               width={200}
               height={200}
