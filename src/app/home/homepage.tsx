@@ -73,7 +73,9 @@ export default function Homepage(props: MerchantPageProps) {
       <MainContent toggleChat={toggleChat} />
       <Recommendations detail={props.detail} />
       <h2 className="text-lg font-semibold mb-2 ml-5">Near You</h2>
-      <MerchantList detail={props.merchants.slice(0, Math.min(props.merchants.length, 7))} />
+      <MerchantList
+        detail={props.merchants.slice(0, Math.min(props.merchants.length, 7))}
+      />
       {chatOpen && <Chat toggleChat={toggleChat} chatHistory={chatHistory} />}
     </div>
   );
@@ -361,26 +363,35 @@ const Chat = ({ toggleChat, chatHistory }: ChatType) => (
                           {dest.merchantBrief.vote_count})
                         </p>
                       </div>
-                      <Image 
-                        src={dest.merchantBrief.photoHref} 
-                        alt={"Merchant picture"} 
+                      <Image
+                        src={dest.merchantBrief.photoHref}
+                        alt={"Merchant picture"}
                         width={200}
                         height={100}
                         className="w-full object-cover rounded-t-md max-h-[150px]"
                       />
                       <div className="px-6 py-4 mb-2 h-full">
-                        <h3 className="font-semibold text-xl">{dest.chainName}</h3>
+                        <h3 className="font-semibold text-xl">
+                          {dest.chainName}
+                        </h3>
                         <p>{dest.merchantBrief.description}</p>
                         <p>Serves: {dest.merchantBrief.cuisine.join(", ")}</p>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {dest.tags.map((cuisineItem: string, j: number) => (
                             <>
-                              <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">{cuisineItem}</span>
+                              <span className="bg-green-500 text-white rounded-full px-3 w-fit text-sm">
+                                {cuisineItem}
+                              </span>
                             </>
                           ))}
-                          {!dest.tags || dest.tags.length === 0 && <>
-                            <span className="bg-red-100 rounded-full px-3 w-fit text-sm">No Tags</span>
-                          </>}
+                          {!dest.tags ||
+                            (dest.tags.length === 0 && (
+                              <>
+                                <span className="bg-red-100 rounded-full px-3 w-fit text-sm">
+                                  No Tags
+                                </span>
+                              </>
+                            ))}
                         </div>
                       </div>
                     </div>
