@@ -15,7 +15,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import sendToCohere, { sendToCohereMerchant } from "@/app/home/actions/rag";
-import { tags } from '../../../../../constant/tags';
+import { tags } from "../../../../../constant/tags";
 import { Spinner } from "flowbite-react";
 interface MerchantDetailPageProps {
   detail: any;
@@ -32,29 +32,31 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
 
   function askEeta(e: any) {
     e.preventDefault();
-    const menu = props.menu.merchant.menu
-    const newMenu = Object.values(menu.categories).flatMap(category => (category as any).items)
-    console.log("menuu", newMenu)
-    console.log("tags", props.user.tags)
-    setLoading(true)
+    const menu = props.menu.merchant.menu;
+    const newMenu = Object.values(menu.categories).flatMap(
+      (category) => (category as any).items,
+    );
+    console.log("menuu", newMenu);
+    console.log("tags", props.user.tags);
+    setLoading(true);
     const resp = sendToCohereMerchant(
-      props.detail.chainName, 
-      props.user.tags!, 
-      newMenu.slice(0, Math.min(newMenu.length, 25)).map(item => ({
+      props.detail.chainName,
+      props.user.tags!,
+      newMenu.slice(0, Math.min(newMenu.length, 25)).map((item) => ({
         available: String(item.available) ?? "Not Available",
-        description: item.description ?? '',
-        name: item.name ?? '',
+        description: item.description ?? "",
+        name: item.name ?? "",
       })),
-    )
+    );
     resp
       .then((res) => {
-        setLoading(false)
+        setLoading(false);
         // alert("success");
         console.log(res);
-        setMagicMsg(res.text)
+        setMagicMsg(res.text);
       })
       .catch((err) => {
-        setLoading(false)
+        setLoading(false);
         console.log("awooga err", err);
       });
   }
@@ -114,7 +116,7 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
               href={`https://www.google.com/maps?q=${props.detail?.latlng?.latitude},${props.detail?.latlng?.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-              >
+            >
               See on maps
             </Link>
           </div>
@@ -157,19 +159,20 @@ export function MerchantDetailPage(props: MerchantDetailPageProps) {
               <div className="flex font-semibold items-center gap-1">
                 <BsStars /> <p>What menus are safe for me?</p>
               </div>
-              { magicMsg ? 
-              <p className="font-light w-fit overflow-y-scroll no-scrollbar max-h-24">
-                {magicMsg}
-              </p>
-              : 
-                loading ? <Spinner className="mx-auto" />  :
-                <button 
+              {magicMsg ? (
+                <p className="font-light w-fit overflow-y-scroll no-scrollbar max-h-24">
+                  {magicMsg}
+                </p>
+              ) : loading ? (
+                <Spinner className="mx-auto w-full items-center justify-center" />
+              ) : (
+                <button
                   className="bg-white px-3 py-1 w-full justify-center items-center rounded-full text-center cursor-pointer"
                   onClick={askEeta}
                 >
                   <p className="text-[#00AE4F] font-semibold">Ask Eeta!</p>
                 </button>
-              }
+              )}
             </div>
             <div className="w-28 h-28 rounded-full flex items-start justify-center mb-auto border-white">
               <Image
