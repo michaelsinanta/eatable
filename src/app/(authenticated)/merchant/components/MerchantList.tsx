@@ -59,7 +59,7 @@ export default function MerchantList({ detail }: { detail: any[] }) {
   };
 
   return (
-    <div className="ml-4">
+    <div className="px-4 pb-8">
       {detail.map((merchant, index) => (
         <div
           key={merchant.id}

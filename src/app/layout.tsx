@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   title: "Eatable",
   description:
     "Eatable is an online platform that enables people with food hypersensitivity to be able to find restaurants and meals that are compatible with their specific dietary restrictions.",
+  icons: {
+    icon: [
+      {
+        url: "/assets/logo.png",
+        href: "/assets/logo.png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
